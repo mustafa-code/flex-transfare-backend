@@ -1,0 +1,10 @@
+{
+    "db_mode": "pdo",
+    "database_config": {
+        "server": "localhost",
+        "port": "3306",
+        "database": "secure_file",
+        "username": "root",
+        "password": ""
+    }
+}
