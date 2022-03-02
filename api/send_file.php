@@ -9,11 +9,12 @@ require_once file_path("db/DBPDO.php");
 $method = getServerData("REQUEST_METHOD");
 
 if ($method == 'POST') {
-    $requestString = General::getJsonData(General::getRequestData());
-    $request = json_decode($requestString, true);
+    // $requestString = General::getJsonData(General::getRequestData());
+    // $request = json_decode($requestString, true);
+    $request = filter_input_array(INPUT_POST);
 
     $rules = array(
-        "file_content" => "required",
+        // "file_content" => "required",
         "start_enc" => "required",
         "end_enc" => "required",
         "size_before" => "required",
@@ -25,7 +26,6 @@ if ($method == 'POST') {
         "file_type" => "required",
         "enc_key" => "required",
     );
-
     $errors = Validation::validate($rules, $request);
     if(count($errors) > 0){
         exit_json([
@@ -35,7 +35,11 @@ if ($method == 'POST') {
             "message" => "Validation error"
         ]);
     } else {
-        $file = General::saveBase64Image($request["file_content"], "aes");
+        $root = file_path("");
+        $file_name = "files/FILE_". date("Ymd_His")."_" .uniqid()."_".$_FILES["file"]["name"];
+        move_uploaded_file($_FILES["file"]["tmp_name"], "$root$file_name");
+    
+        // $file = General::saveBase64Image($request["file_content"], "aes");
         $db = new DB();
         $id = $db->create("files", [
             "message" => $request["message"],
@@ -48,7 +52,7 @@ if ($method == 'POST') {
             "size_after" => $request["size_after"],
             "email" => $request["email"],
             "title" => $request["title"],
-            "file_url" => url($file),
+            "file_url" => url($file_name),
         ]);
         if($id){
             $result = [

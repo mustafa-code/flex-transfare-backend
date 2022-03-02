@@ -27,7 +27,7 @@ if ($method == 'GET') {
         $id = $request["id"];
         $db = new DB();
         $file = $db->find("files", $id);
-        $file_path = str_replace(url(), "", $file["file_url"]);
+        $file_path = file_path(str_replace(url(), "", $file["file_url"]));
         if(file_exists($file_path)){
             unlink($file_path);
         }
